@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "datastore-client"
+version = "0.0.1"
+description = "A simple Google DataStore client"
+authors = ["Jethro Muller <git@jethromuller.co.za>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+google-cloud-datastore = "^1.7"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
