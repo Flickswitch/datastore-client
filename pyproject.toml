@@ -3,6 +3,9 @@ name = "datastore-client"
 version = "0.0.1"
 description = "A simple Google DataStore client"
 authors = ["Jethro Muller <git@jethromuller.co.za>"]
+readme = "README.md"
+repository = "https://github.com/Flickswitch/datastore-client"
+homepage = "https://github.com/Flickswitch/datastore-client"
 
 [tool.poetry.dependencies]
 python = "^3.7"
