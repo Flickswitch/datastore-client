@@ -5,8 +5,10 @@ from google.cloud.datastore import Entity
 from google.cloud.datastore.query import Iterator
 
 
+client = datastore.Client()
+
+
 def set_key(entity_name: str, key_name: str, **properties: Any) -> None:
-    client = datastore.Client()
     key = client.key(entity_name, key_name)
 
     entity = datastore.Entity(key=key)
@@ -16,7 +18,6 @@ def set_key(entity_name: str, key_name: str, **properties: Any) -> None:
 
 
 def get_key(entity_name: str, key_name: str) -> Optional[Entity]:
-    client = datastore.Client()
     key = client.key(entity_name, key_name)
 
     return client.get(key)
@@ -28,8 +29,6 @@ def query_entity(
     projection: List[str]=None,
     limit: Optional[int]=None,
 ) -> Iterator:
-    client = datastore.Client()
-
     query = client.query(kind=entity_name)
 
     for query_filter in query_filters:
