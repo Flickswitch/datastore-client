@@ -24,6 +24,16 @@ def query_entity(
 
 ## Examples
 
+### Changing the `namespace`
+The following will change the namespace for all function calls following it.
+
+```python
+from datastore_client.client import client
+
+
+client.namespace = 'specific_namespace'
+```
+
 ### `set_key`
 
 ```python
