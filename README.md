@@ -1,43 +1,63 @@
 # Simple DataStore Client
 
-A simple Google DataStore client that exposes 3 functions.
+A simple Google DataStore client that exposes 3 functions on the `DatastoreClient` class.
 
 ```python
-def set_key(entity_name: str, key_name: str, **properties: Any) -> None:
-    ...
-```
+class DatastoreClient:
+    def __init__(self, namespace: str=None, **kwargs) -> None:
+        self.client = Client(namespace=namespace, **kwargs)
 
-```python
-def get_key(entity_name: str, key_name: str) -> Optional[Entity]:
-    ...
-```
+    def set_key(
+        self,
+        entity_name: str,
+        key_name: str,
+        **properties: Any,
+    ) -> None:
+        ...
 
-```python
-def query_entity(
-    entity_name: str,
-    *query_filters: Tuple[str, str, Any],
-    projection: List[str]=None,
-    limit: Optional[int]=None,
-) -> Iterator:
-    ...
+    def get_key(
+        self,
+        entity_name: str,
+        key_name: str,
+    ) -> Optional[Entity]:
+        ...
+
+    def query_entity(
+        self,
+        entity_name: str,
+        *query_filters: Tuple[str, str, Any],
+        projection: List[str]=None,
+        limit: Optional[int]=None,
+    ) -> Iterator:
+        ...
 ```
 
 ## Examples
 
 ### Changing the `namespace`
-The following will change the namespace for all function calls following it.
+You can set the `namespace` for the client by passing it in to the constructor
+```python
+from datastore_client.client import client
+
+client = DatastoreClient(namespace='namespace_A')
+```
+
+The following will change the namespace for all subsequent function calls.
 
 ```python
 from datastore_client.client import client
 
-
-client.namespace = 'specific_namespace'
+client = DatastoreClient()
+client.client.namespace = 'specific_namespace'
 ```
 
 ### `set_key`
 
 ```python
-set_key(
+from datastore_client.client import client
+
+client = DatastoreClient()
+client.set_key(
     entity_name=RECHARGE_NOTES_ENTITY, 
     key_name=note_key, 
     username=username, 
@@ -49,13 +69,19 @@ set_key(
 ### `get_key`
 
 ```python
-get_key(LOGIN_ENTITY, username)
+from datastore_client.client import client
+
+client = DatastoreClient()
+client.get_key(LOGIN_ENTITY, username)
 ```
 
 ### `query_entity`
 
 ```python
-product_list = list(query_entity(
+from datastore_client.client import client
+
+client = DatastoreClient()
+product_list = list(client.query_entity(
     PRODUCT_ENTITY,
     ('network', '=', network_name),
     ('product_type', '=', product_code),
