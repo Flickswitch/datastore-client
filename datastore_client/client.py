@@ -1,18 +1,17 @@
 from typing import Any, List, Optional, Tuple
 
-from google.cloud import datastore
-from google.cloud.datastore import Entity
+from google.cloud.datastore import Client, Entity
 from google.cloud.datastore.query import Iterator
 
 
 class DatastoreClient:
     def __init__(self, namespace: str=None, **kwargs) -> None:
-        self.client = datastore.Client(namespace=namespace, **kwargs)
+        self.client = Client(namespace=namespace, **kwargs)
 
     def set_key(self, entity_name: str, key_name: str, **properties: Any) -> None:
         key = self.client.key(entity_name, key_name)
 
-        entity = datastore.Entity(key=key)
+        entity = Entity(key=key)
         entity.update(properties)
 
         self.client.put(entity)
