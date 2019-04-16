@@ -6,8 +6,8 @@ from google.cloud.datastore.query import Iterator
 
 
 class DatastoreClient:
-    def __init__(self):
-        self.client = datastore.Client()
+    def __init__(self, namespace: str=None, **kwargs) -> None:
+        self.client = datastore.Client(namespace=namespace, **kwargs)
 
     def set_key(self, entity_name: str, key_name: str, **properties: Any) -> None:
         key = self.client.key(entity_name, key_name)
