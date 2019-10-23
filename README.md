@@ -37,7 +37,7 @@ class DatastoreClient:
 ### Changing the `namespace`
 You can set the `namespace` for the client by passing it in to the constructor
 ```python
-from datastore_client.client import client
+from datastore_client.client import DatastoreClient
 
 client = DatastoreClient(namespace='namespace_A')
 ```
@@ -45,7 +45,7 @@ client = DatastoreClient(namespace='namespace_A')
 The following will change the namespace for all subsequent function calls.
 
 ```python
-from datastore_client.client import client
+from datastore_client.client import DatastoreClient
 
 client = DatastoreClient()
 client.client.namespace = 'specific_namespace'
@@ -54,7 +54,7 @@ client.client.namespace = 'specific_namespace'
 ### `set_key`
 
 ```python
-from datastore_client.client import client
+from datastore_client.client import DatastoreClient
 
 client = DatastoreClient()
 client.set_key(
@@ -69,7 +69,7 @@ client.set_key(
 ### `get_key`
 
 ```python
-from datastore_client.client import client
+from datastore_client.client import DatastoreClient
 
 client = DatastoreClient()
 client.get_key(LOGIN_ENTITY, username)
@@ -78,7 +78,7 @@ client.get_key(LOGIN_ENTITY, username)
 ### `query_entity`
 
 ```python
-from datastore_client.client import client
+from datastore_client.client import DatastoreClient
 
 client = DatastoreClient()
 product_list = list(client.query_entity(
