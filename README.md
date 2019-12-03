@@ -64,6 +64,13 @@ client.set_key(
     reference=reference, 
     note=notes,
 )
+
+# This can also be used in batch mode
+with client.batch_update():
+    client.set_key(...)
+    client.set_key(...)
+
+# Both key updates will be done when the with block exits
 ```
 
 ### `get_key`
