@@ -1,5 +1,6 @@
 from numbers import Number
 from typing import Any, Dict, Iterator, List, Optional, Tuple
+from unittest.mock import Mock
 
 
 class MockDatastoreClient:
@@ -7,7 +8,8 @@ class MockDatastoreClient:
     data: Dict[str, Any] = {}
 
     def __init__(self, namespace: str = None, **kwargs) -> None:
-        pass
+        self.client = Mock()
+        self.client.namespace = namespace
 
     @classmethod
     def set_key(cls, entity_name: str, key_name: str, **properties: Any) -> None:
