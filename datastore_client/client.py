@@ -4,6 +4,8 @@ from typing import Any, List, Optional, Tuple
 from google.cloud.datastore import Client, Entity
 from google.cloud.datastore.query import Iterator
 
+from datastore_client.utils import chunk_iterable
+
 
 class DatastoreClient:
     def __init__(self, namespace: str=None, **kwargs) -> None:
@@ -13,8 +15,13 @@ class DatastoreClient:
     @contextmanager
     def batch_update(self):
         self._batched_update_entities = []
+
         yield
-        self.client.put_multi(self._batched_update_entities)
+
+        # Max batch size for writes is 500
+        for entity_chunk in chunk_iterable(self._batched_update_entities, chunk_size=500):
+            self.client.put_multi(entity_chunk)
+
         self._batched_update_entities = None
 
     def set_key(self, entity_name: str, key_name: str, **properties: Any) -> None:
