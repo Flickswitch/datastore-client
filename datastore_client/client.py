@@ -27,13 +27,18 @@ class DatastoreClient:
     def set_key(self, entity_name: str, key_name: str, **properties: Any) -> None:
         key = self.client.key(entity_name, key_name)
 
-        entity = Entity(key=key)
-        entity.update(properties)
+        with self.client.transaction():
+            entity = self.client.get(key)
 
-        if self._batched_update_entities is not None:
-            self._batched_update_entities.append(entity)
-        else:
-            self.client.put(entity)
+            if entity is None:
+                entity = Entity(key=key)
+
+            entity.update(properties)
+
+            if self._batched_update_entities is not None:
+                self._batched_update_entities.append(entity)
+            else:
+                self.client.put(entity)
 
     def get_key(self, entity_name: str, key_name: str) -> Optional[Entity]:
         key = self.client.key(entity_name, key_name)
