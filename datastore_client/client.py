@@ -7,22 +7,57 @@ from google.cloud.datastore.query import Iterator
 from datastore_client.utils import chunk_iterable
 
 
+class BatchManager:
+    def __init__(self, datastore_client, overwrite_keys=False):
+        self.client = datastore_client
+        self.overwrite_keys = overwrite_keys
+        self.batch = {}
+
+    def set_key(self, entity_name: str, key_name: str, **properties: Any) -> None:
+        key = self.client.key(entity_name, key_name)
+
+        entity = Entity(key=key)
+        entity.update(properties)
+
+        self.batch[key] = entity
+
+    def batch_update(self):
+        if self.overwrite_keys:
+            return self.batch_insert()
+
+        existing_entities = []
+        # Get existing entities to preserve unchanged values
+        for key_chunk in chunk_iterable(self.batch.keys(), chunk_size=1000):
+            key_entities = self.client.get_multi(key_chunk)
+            existing_entities.extend(key_entities)
+
+        # Update batch with new properties
+        for existing_entity in existing_entities:
+            new_entity = self.batch[existing_entity.key]
+            existing_entity.update(new_entity)
+
+            self.batch[existing_entity.key] = existing_entity
+
+        # Insert updated entities
+        self.batch_insert()
+
+    def batch_insert(self):
+        # Max batch size for writes is 500
+        for entity_chunk in chunk_iterable(self.batch.values(), chunk_size=500):
+            self.client.put_multi(entity_chunk)
+
+
 class DatastoreClient:
     def __init__(self, namespace: str=None, **kwargs) -> None:
         self.client = Client(namespace=namespace, **kwargs)
-        self._batched_update_entities = None
 
     @contextmanager
-    def batch_update(self):
-        self._batched_update_entities = []
+    def batch_update(self, overwrite_keys=False):
+        batch_manager = BatchManager(self.client, overwrite_keys=overwrite_keys)
 
-        yield
+        yield batch_manager
 
-        # Max batch size for writes is 500
-        for entity_chunk in chunk_iterable(self._batched_update_entities, chunk_size=500):
-            self.client.put_multi(entity_chunk)
-
-        self._batched_update_entities = None
+        batch_manager.batch_update()
 
     def set_key(self, entity_name: str, key_name: str, **properties: Any) -> None:
         key = self.client.key(entity_name, key_name)
@@ -34,11 +69,7 @@ class DatastoreClient:
                 entity = Entity(key=key)
 
             entity.update(properties)
-
-            if self._batched_update_entities is not None:
-                self._batched_update_entities.append(entity)
-            else:
-                self.client.put(entity)
+            self.client.put(entity)
 
     def get_key(self, entity_name: str, key_name: str) -> Optional[Entity]:
         key = self.client.key(entity_name, key_name)
