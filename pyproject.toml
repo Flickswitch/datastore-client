@@ -9,7 +9,7 @@ homepage = "https://github.com/Flickswitch/datastore-client"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-google-cloud-datastore = "^1.9.0"
+google-cloud-datastore = ">=1.9,<3.0"
 
 [tool.poetry.dev-dependencies]
 
